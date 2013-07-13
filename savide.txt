@@ -1,0 +1,1 @@
+./Release/main.o ./Release/bodies.o ./Release/Render.o ./Release/agent.o   
