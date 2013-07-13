@@ -259,7 +259,7 @@ void Clear (int count)
    agent->nearestAngle[1] = 1000.0f;
    agent->reverseMove = false;
    if (agent->frontObstacle == true)
-      if (agent->body->GetLinearVelocity ().x < 0.5 && agent->body->GetLinearVelocity ().y < 0.5)
+      if (agent->body->GetLinearVelocity ().x < 0.3 && agent->body->GetLinearVelocity ().y < 0.3)
       {
          agent->reverseMove = true;
       }
@@ -336,7 +336,7 @@ void turnToNearestAngle ()
 void Render ()
 {
    LoadFPS (60);
-   glClearColor (1, 1, 1, 1);
+   glClearColor (250/255.0, 245/255.0, 245/255.0, 1);
    srand (time (NULL) );
    //at global scope
    static float currentRayAngle = 0;
@@ -364,16 +364,16 @@ void Render ()
    b2Vec2 p8 = p7 + rayLength * b2Vec2 (sinf (DEGTORAD * (currentRayAngle + 270 ) ),
                                         cosf ( DEGTORAD * (currentRayAngle + 270 ) ) );
    b2Vec2 p9 =  b2Vec2 (agent->body->GetPosition ().x ,
-                        agent->body->GetPosition ().y  - 5 ) ;
+                        agent->body->GetPosition ().y  - 4 ) ;
    b2Vec2 p10 = b2Vec2 (agent->body->GetPosition ().x ,
-                        agent->body->GetPosition ().y - 5 )  + rayLength / 2.0 * b2Vec2 (sinf ( (
+                        agent->body->GetPosition ().y - 4 )  + rayLength / 2.0 * b2Vec2 (sinf ( (
                                  agent->angle + 1.57) ),
                               cosf ( ( agent->angle + 1.57  ) ) );
 
    b2Vec2 p11 =  b2Vec2 (agent->body->GetPosition ().x ,
-                         agent->body->GetPosition ().y + 5  ) ;
+                         agent->body->GetPosition ().y + 4  ) ;
    b2Vec2 p12 = b2Vec2 (agent->body->GetPosition ().x,
-                        agent->body->GetPosition ().y + 5   )  + rayLength / 2.0  * b2Vec2 (sinf ( (
+                        agent->body->GetPosition ().y + 4   )  + rayLength / 2.0  * b2Vec2 (sinf ( (
                                  agent->angle + 1.57) ),
                               cosf ( ( agent->angle + 1.57 ) ) );
 
@@ -575,7 +575,8 @@ void Render ()
    b2Vec2 intersectionPoint4 = p7  + closestFraction4 * (p8 - p7);
    b2Vec2 intersectionPoint5 = p9  + closestFraction4 * (p10 - p9);
    b2Vec2 intersectionPoint6 = p11 + closestFraction4 * (p12 - p11);
-
+   float dist = (agent->body->GetPosition().x - intersectionPoint5.x) * (agent->body->GetPosition().x - intersectionPoint5.x)
+               + (agent->body->GetPosition().y - intersectionPoint5.y) * (agent->body->GetPosition().x - intersectionPoint5.y);
    //draw a line
    glColor3f (255, 0, 0); //white
    glBegin (GL_LINES);
@@ -617,12 +618,17 @@ void Render ()
    glVertex2f ( p9.x, p9.y );
    glVertex2f ( intersectionPoint5.x, intersectionPoint5.y );
    glEnd ();
-
+   glBegin (GL_POINTS);
+   glVertex2f ( intersectionPoint5.x, intersectionPoint5.y );
+   glEnd ();
    glBegin (GL_LINES);
    glVertex2f ( p11.x, p11.y );
    glVertex2f ( intersectionPoint6.x, intersectionPoint6.y );
    glEnd ();
 
+   glBegin (GL_POINTS);
+   glVertex2f ( intersectionPoint6.x, intersectionPoint6.y );
+   glEnd ();
    SetRenderColor (0, 0, 0, 255);
    if (isObstacle[2] == false)
    { SetRenderColor (255, 0, 255, 255); }
@@ -648,11 +654,11 @@ void Render ()
    glVertex2f ( intersectionPoint4.x, intersectionPoint4.y );
    glEnd ();
 
-   glBegin (GL_LINES);
-   glVertex2f ( agent->body->GetPosition ().x, agent->body->GetPosition ().y );
-   glVertex2f ( agent->body->GetPosition ().x + sin (agent->angle + 1.57) * 100,
-                agent->body->GetPosition ().y + cos (agent->angle + 1.57) * 100);
-   glEnd ();
+//   glBegin (GL_LINES);
+//   glVertex2f ( agent->body->GetPosition ().x, agent->body->GetPosition ().y );
+//   glVertex2f ( agent->body->GetPosition ().x + sin (agent->angle + 1.57) * 100,
+//                agent->body->GetPosition ().y + cos (agent->angle + 1.57) * 100);
+//   glEnd ();
 
    static float posx = 0;
    posx = posx + .1;
@@ -676,10 +682,10 @@ void Render ()
    agent->isCollision = 0;
 
 //  checking collision here, not so important now
-   for (int i = 1; i < 25; ++i)
+   for (int i = 1; i < 15; ++i)
    {
-      float x = 20  + (i * 1) * sinf (agent->angle + 1.57) ;
-      float y = 20  +  (i * 1) * cosf (agent->angle + 1.57);
+      float x = 20  + (i * 2) * sinf (agent->angle + 1.57) ;
+      float y = 20  +  (i * 2) * cosf (agent->angle + 1.57);
       if (x < 40 && y < 40)
          if (carCollisionMap[ (int) y][ (int) x] == 1)
          {
@@ -691,7 +697,7 @@ void Render ()
             if (!agent->frontObstacle)
                if (agent->nearestAngle[LEFT_SIDE] != 1000 || agent->nearestAngle[RIGHT_SIDE] != 1000)
                {
-//                  if (glutGet (GLUT_ELAPSED_TIME) - timerT > 1000)
+//                  if (glutGet (GLUT_ELAPSED_TIME) - timerT > 500)
                   {
                      if (agent->nearestAngle[LEFT_SIDE] < agent->nearestAngle[RIGHT_SIDE])
                      {
@@ -707,7 +713,7 @@ void Render ()
 //                  agent->nearestAngle[LEFT_SIDE] = 1000;
                         agent->angle = agent->angle + .2;
                      }
-//                  timerT = glutGet (GLUT_ELAPSED_TIME);
+                 timerT = glutGet (GLUT_ELAPSED_TIME);
                   }
                }
 //            if (glutGet (GLUT_ELAPSED_TIME) - timerT > 1000)

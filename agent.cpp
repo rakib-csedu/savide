@@ -28,14 +28,14 @@ void Agent::moveForward()
 {
    body->SetTransform (body->GetPosition (), -angle);
 
-   b2Vec2 force = b2Vec2 (sinf (angle + 1.57) * 30000,
-                          cosf (angle + 1.57 ) * 30000);
+   b2Vec2 force = b2Vec2 (sinf (angle + 1.57) * 25000,
+                          cosf (angle + 1.57 ) * 25000);
    if (isCollision != 1 && reverseMove == false)
    { body->ApplyForce (force, body->GetPosition () ); }
    else 
    {
-      b2Vec2 force = b2Vec2 (sinf (angle + 1.57) * -5000,
-                             cosf (angle + 1.57 ) * -5000);
+      b2Vec2 force = b2Vec2 (sinf (angle + 1.57) * -4000,
+                             cosf (angle + 1.57 ) * -4000);
       body->ApplyForce (force,
                                body->GetPosition () );
    }
